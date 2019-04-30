@@ -12,6 +12,7 @@ import UIKit
 class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet var distanceReading: UILabel!
     var locationManager: CLLocationManager?
+    var isAlertShown = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +24,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         view.backgroundColor = .gray
     }
     
+    // Ask for the user's permission to track her location
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedAlways {
             if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
@@ -33,6 +35,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
+    // Look for beacons
     func startScanning() {
         let uuid = UUID(uuidString: "5A4BCFCE-174E-4BAC-A814-092E77F6B7E5")!
         let beaconRegion = CLBeaconRegion(proximityUUID: uuid, major: 123, minor: 456, identifier: "MyBeacon")
@@ -41,6 +44,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         locationManager?.startRangingBeacons(in: beaconRegion)
     }
     
+    // Update the view depending on the distance from the beacon
     func update(distance: CLProximity) {
         UIView.animate(withDuration: 1) {
             switch distance {
@@ -63,8 +67,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
+    // Do something if a beacon is found
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         if let beacon = beacons.first {
+            if !isAlertShown {
+                let beaconAC = UIAlertController(title: "Beacon detected!", message: nil, preferredStyle: .alert)
+                beaconAC.addAction(UIAlertAction(title: "OK", style: .default))
+                isAlertShown.toggle()
+                present(beaconAC, animated: true)
+            }
+
             update(distance: beacon.proximity)
         } else {
             update(distance: .unknown)
