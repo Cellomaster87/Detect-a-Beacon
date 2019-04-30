@@ -10,9 +10,17 @@ import CoreLocation
 import UIKit
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
+    @IBOutlet var beaconIdentifier: UILabel!
     @IBOutlet var distanceReading: UILabel!
+    
     var locationManager: CLLocationManager?
     var isAlertShown = false
+    
+    let beacon1 = Beacon(uuid: UUID(uuidString: "5A4BCFCE-174E-4BAC-A814-092E77F6B7E5")!, major: 123, minor: 456, identifier: "First beacon", isAlertShown: false)
+    let beacon2 = Beacon(uuid: UUID(uuidString: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!, major: 234, minor: 567, identifier: "Second beacon", isAlertShown: false)
+    let beacon3 = Beacon(uuid: UUID(uuidString: "74278BDA-B644-4520-8F0C-720EAF059935")!, major: 345, minor: 678, identifier: "Third beacon", isAlertShown: false)
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +30,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         locationManager?.requestAlwaysAuthorization()
         
         view.backgroundColor = .gray
+        beaconIdentifier.text = "No beacon detected"
     }
     
     // Ask for the user's permission to track her location
@@ -29,19 +38,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         if status == .authorizedAlways {
             if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
                 if CLLocationManager.isRangingAvailable() {
-                    startScanning()
+                    startScanning(for: beacon1)
+                    startScanning(for: beacon2)
+                    startScanning(for: beacon3)
                 }
             }
         }
     }
     
     // Look for beacons
-    func startScanning() {
-        let uuid = UUID(uuidString: "5A4BCFCE-174E-4BAC-A814-092E77F6B7E5")!
-        let beaconRegion = CLBeaconRegion(proximityUUID: uuid, major: 123, minor: 456, identifier: "MyBeacon")
+    func startScanning(for beacon: Beacon) {
+        let beaconRegion = CLBeaconRegion(proximityUUID: beacon.uuid, major: beacon.major, minor: beacon.minor, identifier: beacon.identifier)
         
         locationManager?.startMonitoring(for: beaconRegion)
         locationManager?.startRangingBeacons(in: beaconRegion)
+        print("Started scanning for \(beaconRegion.identifier)")
     }
     
     // Update the view depending on the distance from the beacon
@@ -65,21 +76,29 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 self.distanceReading.text = "UNKNOWN"
             }
         }
+        print("Beacon distance requested!")
     }
     
     // Do something if a beacon is found
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         if let beacon = beacons.first {
-            if !isAlertShown {
-                let beaconAC = UIAlertController(title: "Beacon detected!", message: nil, preferredStyle: .alert)
+            beaconIdentifier.text = region.identifier
+            update(distance: beacon.proximity)
+            
+            if isAlertShown == false {
+                let beaconAC = UIAlertController(title: "\(region.identifier) detected!", message: nil, preferredStyle: .alert)
                 beaconAC.addAction(UIAlertAction(title: "OK", style: .default))
-                isAlertShown.toggle()
+                isAlertShown = true
                 present(beaconAC, animated: true)
             }
-
-            update(distance: beacon.proximity)
+            
+            if beacon.proximity == CLProximity.unknown {
+                isAlertShown = false
+            }
         } else {
-            update(distance: .unknown)
+            beaconIdentifier.text = "Beacon not found!"
+            
+            return
         }
     }
 }
