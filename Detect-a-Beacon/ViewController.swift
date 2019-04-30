@@ -20,8 +20,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let beacon2 = Beacon(uuid: UUID(uuidString: "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0")!, major: 234, minor: 567, identifier: "Second beacon", isAlertShown: false)
     let beacon3 = Beacon(uuid: UUID(uuidString: "74278BDA-B644-4520-8F0C-720EAF059935")!, major: 345, minor: 678, identifier: "Third beacon", isAlertShown: false)
     
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -38,21 +37,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         if status == .authorizedAlways {
             if CLLocationManager.isMonitoringAvailable(for: CLBeaconRegion.self) {
                 if CLLocationManager.isRangingAvailable() {
-                    startScanning(for: beacon1)
-                    startScanning(for: beacon2)
-                    startScanning(for: beacon3)
+                    startScanning()
                 }
             }
         }
     }
     
     // Look for beacons
-    func startScanning(for beacon: Beacon) {
-        let beaconRegion = CLBeaconRegion(proximityUUID: beacon.uuid, major: beacon.major, minor: beacon.minor, identifier: beacon.identifier)
-        
-        locationManager?.startMonitoring(for: beaconRegion)
-        locationManager?.startRangingBeacons(in: beaconRegion)
-        print("Started scanning for \(beaconRegion.identifier)")
+    func startScanning() {
+        let beacons: [Beacon] = [beacon1, beacon2, beacon3]
+        for beacon in beacons {
+            let beaconRegion = CLBeaconRegion(proximityUUID: beacon.uuid, major: beacon.major, minor: beacon.minor, identifier: beacon.identifier)
+            
+            locationManager?.startMonitoring(for: beaconRegion)
+            locationManager?.startRangingBeacons(in: beaconRegion)
+        }
     }
     
     // Update the view depending on the distance from the beacon
@@ -102,4 +101,3 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
 }
-
