@@ -12,15 +12,23 @@ import UIKit
 class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet var distanceReading: UILabel!
     var locationManager: CLLocationManager?
+    let circle = UIView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .lightGray
+        
+        circle.frame.size = CGSize(width: 256, height: 256)
+        circle.layer.cornerRadius = 128
+        circle.backgroundColor = .darkGray
+        circle.center.x = view.center.x
+        circle.center.y = view.center.y
+        view.addSubview(circle)
+        
         locationManager = CLLocationManager()
         locationManager?.delegate = self
         locationManager?.requestAlwaysAuthorization()
-        
-        view.backgroundColor = .gray
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -45,19 +53,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         UIView.animate(withDuration: 1) {
             switch distance {
             case .far:
-                self.view.backgroundColor = .blue
+                self.circle.backgroundColor = .blue
+                self.animateCircle(scale: 0.25)
                 self.distanceReading.text = "FAR"
                 
             case .near:
-                self.view.backgroundColor = .orange
+                self.circle.backgroundColor = .orange
+                self.animateCircle(scale: 0.5)
                 self.distanceReading.text = "NEAR"
                 
             case .immediate:
-                self.view.backgroundColor = .red
+                self.circle.backgroundColor = .red
+                self.animateCircle(scale: 1.0)
                 self.distanceReading.text = "RIGHT HERE"
                 
             default:
-                self.view.backgroundColor = .gray
+                self.circle.backgroundColor = .darkGray
+                self.animateCircle(scale: 0.001)
                 self.distanceReading.text = "UNKNOWN"
             }
         }
@@ -69,6 +81,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         } else {
             update(distance: .unknown)
         }
+    }
+    
+    func animateCircle(scale: CGFloat) {
+        UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 5.0, options: [], animations: {
+            self.circle.transform = CGAffineTransform(scaleX: scale, y: scale)
+        }, completion: nil)
     }
 }
 

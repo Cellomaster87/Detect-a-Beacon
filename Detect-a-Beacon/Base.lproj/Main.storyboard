@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vNt-BF-fTv">
-                                <rect key="frame" x="111" y="424" width="192" height="48"/>
+                                <rect key="frame" x="111" y="44" width="192" height="48"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="40"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -27,7 +27,7 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="vNt-BF-fTv" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="6Ue-nn-q7O"/>
+                            <constraint firstItem="vNt-BF-fTv" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="4Bf-SR-p7J"/>
                             <constraint firstItem="vNt-BF-fTv" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="qqu-yE-xvd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
