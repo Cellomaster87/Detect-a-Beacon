@@ -73,9 +73,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             default:
                 self.view.backgroundColor = .gray
                 self.distanceReading.text = "UNKNOWN"
+                self.beaconIdentifier.text = "No beacon detected"
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 10, execute: {
+                    self.isAlertShown = false
+                })
             }
         }
-        print("Beacon distance requested!")
     }
     
     // Do something if a beacon is found
@@ -90,14 +94,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 isAlertShown = true
                 present(beaconAC, animated: true)
             }
-            
-            if beacon.proximity == CLProximity.unknown {
-                isAlertShown = false
-            }
-        } else {
-            beaconIdentifier.text = "Beacon not found!"
-            
-            return
         }
     }
 }
